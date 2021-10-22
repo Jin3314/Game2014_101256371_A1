@@ -27,6 +27,7 @@ public class ButtonMove : MonoBehaviour
     public void LeftBtnUp()
     {
         betterPmove2.LeftMove = false;
+        betterPmove2.Idle = true;
     }
 
     public void RightBtnDown()
@@ -37,6 +38,7 @@ public class ButtonMove : MonoBehaviour
     public void RightBtnUp()
     {
         betterPmove2.RightMove = false;
+        betterPmove2.Idle = true;
     }
 
     public void Jump()
@@ -45,6 +47,7 @@ public class ButtonMove : MonoBehaviour
         betterPmove2.JumpMove = true;
         
     }
+
 
     public void JumpBtnUp()
     {

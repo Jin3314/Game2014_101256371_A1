@@ -11,6 +11,7 @@ public class BetterPmove : MonoBehaviour
     public bool RightMove = false;
     public bool JumpMove = false;
     public bool JumpMoving = false;
+    public bool Idle = false;
     public float jumpPower = -10.0f;
     Vector3 moveVelocity = Vector3.zero;
     float moveSpeed = 4; //버튼을 누르는 동안에 오브젝트의 움직이는 속도
@@ -62,7 +63,12 @@ public class BetterPmove : MonoBehaviour
 
             }
 
-        
+        if(Idle)
+        {
+            moveVelocity = new Vector3(0, 0, 0);
+            transform.position += moveVelocity * moveSpeed * Time.deltaTime;
+            animator.SetBool("isWalking", false);
+        }
        
         if (LeftMove)
         {
@@ -70,6 +76,7 @@ public class BetterPmove : MonoBehaviour
             moveVelocity = new Vector3(-0.30f, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             spriteRenderer.flipX = true;
+            animator.SetBool("isWalking", true);
         }
         if (RightMove)
         {
@@ -77,11 +84,9 @@ public class BetterPmove : MonoBehaviour
             moveVelocity = new Vector3(+0.30f, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             spriteRenderer.flipX = false;
-        }
-        if (moveSpeed < 0.2)
-            animator.SetBool("isWalking", false);
-        else
             animator.SetBool("isWalking", true);
+        }
+       
 
     }
 
