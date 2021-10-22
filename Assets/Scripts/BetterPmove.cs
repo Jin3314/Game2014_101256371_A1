@@ -73,7 +73,7 @@ public class BetterPmove : MonoBehaviour
         if (LeftMove)
         {
             
-            moveVelocity = new Vector3(-0.30f, 0, 0);
+            moveVelocity = new Vector3(-0.90f, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             spriteRenderer.flipX = true;
             animator.SetBool("isWalking", true);
@@ -81,7 +81,7 @@ public class BetterPmove : MonoBehaviour
         if (RightMove)
         {
      
-            moveVelocity = new Vector3(+0.30f, 0, 0);
+            moveVelocity = new Vector3(+0.90f, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             spriteRenderer.flipX = false;
             animator.SetBool("isWalking", true);
