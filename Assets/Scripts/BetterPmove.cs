@@ -5,18 +5,19 @@ using UnityEngine;
 public class BetterPmove : MonoBehaviour
 {
 
-
-    Animator animator;
+    public AudioClip audioJump;
+    public AudioClip audioAttack;
+    public AudioClip audioDamaged;
+    public AudioClip audioItem;
+    public AudioClip audioDie;
+    public AudioClip audioFinish;
     public bool LeftMove = false;
     public bool RightMove = false;
     public bool JumpMove = false;
     public bool JumpMoving = false;
     public bool Idle = false;
     public float jumpPower = -10.0f;
-    Vector3 moveVelocity = Vector3.zero;
     float moveSpeed = 4; //버튼을 누르는 동안에 오브젝트의 움직이는 속도
-    SpriteRenderer spriteRenderer;
-    CapsuleCollider2D capcollider;
     public bool isJumping = false;
     public int jumpCount;
     public bool isGround;
@@ -24,7 +25,11 @@ public class BetterPmove : MonoBehaviour
     public GameManager gameManager;
 
     Rigidbody2D rigid;
-
+    Animator animator;
+    SpriteRenderer spriteRenderer;
+    CapsuleCollider2D capcollider;
+    Vector3 moveVelocity = Vector3.zero;
+    AudioSource audioSource;
     // Use this for initialization
     void Start()
     {
@@ -32,6 +37,7 @@ public class BetterPmove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigid = gameObject.GetComponent<Rigidbody2D>();
         capcollider = GetComponent<CapsuleCollider2D>();
+        audioSource = GetComponent<AudioSource>();
         jumpCount = 1; //점프 가능횟수
 
         isGround = true; //땅에 있을때
@@ -49,6 +55,9 @@ public class BetterPmove : MonoBehaviour
             {
                 if (jumpCount == 1)
                 {
+                    audioSource.clip = audioJump;
+                    audioSource.Play();
+
                     rigid.velocity = Vector2.zero;
 
                     Vector2 jumpVelocity = new Vector2(0, jumpPower);
@@ -109,6 +118,7 @@ public class BetterPmove : MonoBehaviour
         {
             if (rigid.velocity.y < 0 && transform.position.y > col.transform.position.y)
             {
+       
                 OnAttack(col.transform); //적을 공격하는 함수
             }
             else
@@ -122,6 +132,9 @@ public class BetterPmove : MonoBehaviour
 
     void OnDamaged(Vector2 tartgetPos)
     {
+        audioSource.clip = audioDamaged;
+        audioSource.Play();
+
         gameManager.HealthDown();
 
         gameObject.layer = 11; //playerDamaged Layer number가 11로 지정되어있음 
@@ -150,7 +163,8 @@ public class BetterPmove : MonoBehaviour
 
     void OnAttack(Transform enemy)
     {
-
+        audioSource.clip = audioAttack;
+        audioSource.Play();
         //Point 점수 올리기
         gameManager.stagePoint += 100;
 
@@ -170,6 +184,8 @@ public class BetterPmove : MonoBehaviour
 
         if (other.gameObject.tag == "item")
         {
+            audioSource.clip = audioItem;
+            audioSource.Play();
             //Point
             //포인트를 얻음
             bool isBronze = other.gameObject.name.Contains("Bronze");
@@ -188,6 +204,8 @@ public class BetterPmove : MonoBehaviour
         }
         else if (other.gameObject.tag == "finish")
         {
+            audioSource.clip = audioFinish;
+            audioSource.Play();
             //Next Stage
             gameManager.NextStage();
 
@@ -196,7 +214,8 @@ public class BetterPmove : MonoBehaviour
 
     public void OnDie()
     { //죽음 effect(외적인거)
-
+        audioSource.clip = audioDie;
+        audioSource.Play();
         //Sprite Alpha : 색상 변경 
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
