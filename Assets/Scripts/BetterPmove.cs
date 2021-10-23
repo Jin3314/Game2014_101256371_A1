@@ -104,5 +104,58 @@ public class BetterPmove : MonoBehaviour
 
         }
 
+        if (col.gameObject.tag == "Enemy")
+        {
+            if (rigid.velocity.y < 0 && transform.position.y > col.transform.position.y)
+            {
+                OnAttack(col.transform); //적을 공격하는 함수
+            }
+            else
+            { // 밟는 모션이 아닌 적과의 충돌-> 데미지를 플레이어가 받음(데미지 받는함수) 
+                OnDamaged(col.transform.position); //현재 충돌한 오브젝트의 위치값을 넘겨줌  
+            }
+        }
+
+    }
+
+    void OnDamaged(Vector2 tartgetPos)
+    {
+        gameObject.layer = 11; //playerDamaged Layer number가 11로 지정되어있음 
+
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f); //투명도를 0.4로 부여하여 지금이 무적시간으로 변경되었음을 보여줌
+
+        //맞으면 튕겨나가는 모션
+        int dirc = transform.position.x - tartgetPos.x > 0 ? 1 : -1;
+        //튕겨나가는 방향지정 -> 플레이어 위치(x) - 충돌한 오브젝트위치(x) > 0: 플레이어가 오브젝트를 기준으로 어디에 있었는지 판별
+        //> 0이면 1(오른쪽으로 튕김) , <=0 이면 -1 (왼쪽으로 튕김)
+        rigid.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse); // *7은 튕겨나가는 강도를 의미 
+
+
+        Invoke("OffDamaged", 2); //2초의 딜레이 (무적시간 2초)
+    }
+
+    void OffDamaged()
+    { //무적해제함수 
+        gameObject.layer = 10; //플레이어 레이어로 복귀함
+
+        spriteRenderer.color = new Color(1, 1, 1, 1); //투명도를 1로 다시 되돌림 
+
+    }
+
+    void OnAttack(Transform enemy)
+    {
+
+
+
+        //Reaction Force : 반동(플레이어가 튕겨져나감)
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+
+        //Enemy Die
+        //몬스터에 적용한 스크립트의 함수를 사용하기위해 해당 클래스의 변수를 선언해서 초기화
+        Monster enemyMove = enemy.GetComponent<Monster>();
+        enemyMove.OnDamaged(); // 몬스터가 데미지를 입었을때 실행할 함수를 불러옴 
+
+
     }
 }
+
