@@ -16,7 +16,7 @@ public class BetterPmove : MonoBehaviour
     Vector3 moveVelocity = Vector3.zero;
     float moveSpeed = 4; //버튼을 누르는 동안에 오브젝트의 움직이는 속도
     SpriteRenderer spriteRenderer;
-
+    CapsuleCollider2D capcollider;
     public bool isJumping = false;
     public int jumpCount;
     public bool isGround;
@@ -31,7 +31,7 @@ public class BetterPmove : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigid = gameObject.GetComponent<Rigidbody2D>();
-
+        capcollider = GetComponent<CapsuleCollider2D>();
         jumpCount = 1; //점프 가능횟수
 
         isGround = true; //땅에 있을때
@@ -122,6 +122,8 @@ public class BetterPmove : MonoBehaviour
 
     void OnDamaged(Vector2 tartgetPos)
     {
+        gameManager.HealthDown();
+
         gameObject.layer = 11; //playerDamaged Layer number가 11로 지정되어있음 
 
         spriteRenderer.color = new Color(1, 1, 1, 0.4f); //투명도를 0.4로 부여하여 지금이 무적시간으로 변경되었음을 보여줌
@@ -134,6 +136,8 @@ public class BetterPmove : MonoBehaviour
 
 
         Invoke("OffDamaged", 2); //2초의 딜레이 (무적시간 2초)
+
+       
     }
 
     void OffDamaged()
@@ -182,11 +186,34 @@ public class BetterPmove : MonoBehaviour
             //동전 사라지기(비활성화)
             other.gameObject.SetActive(false);
         }
-        else if (other.gameObject.tag == "Finish")
+        else if (other.gameObject.tag == "finish")
         {
             //Next Stage
+            gameManager.NextStage();
 
         }
+    }
+
+    public void OnDie()
+    { //죽음 effect(외적인거)
+
+        //Sprite Alpha : 색상 변경 
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        //Sprite Flip Y : 뒤집어지기 
+        spriteRenderer.flipY = true;
+
+        //Collider Disable : 콜라이더 끄기 
+        capcollider.enabled = false;
+
+        //Die Effect Jump : 아래로 추락(콜라이더 꺼서 바닥밑으로 추락함 )
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+
+
+    }
+    public void VelocityZero()
+    { //속력을 0으로 만드는 함수 
+        rigid.velocity = Vector2.zero;
     }
 }
 
