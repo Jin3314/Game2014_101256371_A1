@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public Text UIStage;
 
     public GameObject UIRestartBtn;
+    public GameObject UIMenuBtn;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +54,7 @@ public class GameManager : MonoBehaviour
             Text btnText = UIRestartBtn.GetComponentInChildren<Text>();
             btnText.text = "GameClear! Play Again?";
             UIRestartBtn.SetActive(true);
+            UIMenuBtn.SetActive(true);
         }
 
 
@@ -93,12 +95,12 @@ public class GameManager : MonoBehaviour
         else
         {
             player.OnDie();
-
-            Debug.Log("죽었따.");
+            Time.timeScale = 0;
+           
 
             //UI 다시시작버튼 
             UIRestartBtn.SetActive(true);
-
+            UIMenuBtn.SetActive(true);
             //죽었을 경우 모든 UI가 사라지도록 해야함 -> All Health UI Off
             UIhealth[0].color = new Color(1, 0, 0, 0.3f);
         }
@@ -112,6 +114,12 @@ public class GameManager : MonoBehaviour
     }
 
     public void Restart()
+    { //재시작이므로 처음부터 다시시작이라 scene 0번 
+        Time.timeScale = 1; //플레이어가 다시 움직일 수 있도록 함 
+        SceneManager.LoadScene(1);
+    }
+
+    public void GotoMain()
     { //재시작이므로 처음부터 다시시작이라 scene 0번 
         Time.timeScale = 1; //플레이어가 다시 움직일 수 있도록 함 
         SceneManager.LoadScene(0);
