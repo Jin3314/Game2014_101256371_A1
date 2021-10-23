@@ -20,7 +20,8 @@ public class BetterPmove : MonoBehaviour
     public bool isJumping = false;
     public int jumpCount;
     public bool isGround;
-   
+
+    public GameManager gameManager;
 
     Rigidbody2D rigid;
 
@@ -40,39 +41,39 @@ public class BetterPmove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-            if (isGround)
+
+        if (isGround)
+        {
+            jumpCount = 1;
+            if (JumpMove)
             {
-                jumpCount = 1;
-                if (JumpMove)
+                if (jumpCount == 1)
                 {
-                    if (jumpCount == 1)
-                    {
-                        rigid.velocity = Vector2.zero;
+                    rigid.velocity = Vector2.zero;
 
-                        Vector2 jumpVelocity = new Vector2(0, jumpPower);
-                        rigid.AddForce(jumpVelocity, ForceMode2D.Impulse);
+                    Vector2 jumpVelocity = new Vector2(0, jumpPower);
+                    rigid.AddForce(jumpVelocity, ForceMode2D.Impulse);
 
-                        isGround = false;
+                    isGround = false;
 
-                        jumpCount = 0;
-                    }
-
-
+                    jumpCount = 0;
                 }
+
 
             }
 
-        if(Idle)
+        }
+
+        if (Idle)
         {
             moveVelocity = new Vector3(0, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             animator.SetBool("isWalking", false);
         }
-       
+
         if (LeftMove)
         {
-            
+
             moveVelocity = new Vector3(-0.90f, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             spriteRenderer.flipX = true;
@@ -80,13 +81,13 @@ public class BetterPmove : MonoBehaviour
         }
         if (RightMove)
         {
-     
+
             moveVelocity = new Vector3(+0.90f, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             spriteRenderer.flipX = false;
             animator.SetBool("isWalking", true);
         }
-       
+
 
     }
 
@@ -97,7 +98,7 @@ public class BetterPmove : MonoBehaviour
         if (col.gameObject.tag == "Ground")
 
         {
-            Debug.Log("Grounded");
+
             isGround = true;    //Ground에 닿으면 isGround는 true
 
             jumpCount = 1;          //Ground에 닿으면 점프횟수가 1로 초기화됨
@@ -115,6 +116,7 @@ public class BetterPmove : MonoBehaviour
                 OnDamaged(col.transform.position); //현재 충돌한 오브젝트의 위치값을 넘겨줌  
             }
         }
+
 
     }
 
@@ -145,7 +147,8 @@ public class BetterPmove : MonoBehaviour
     void OnAttack(Transform enemy)
     {
 
-
+        //Point 점수 올리기
+        gameManager.stagePoint += 100;
 
         //Reaction Force : 반동(플레이어가 튕겨져나감)
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
@@ -156,6 +159,34 @@ public class BetterPmove : MonoBehaviour
         enemyMove.OnDamaged(); // 몬스터가 데미지를 입었을때 실행할 함수를 불러옴 
 
 
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+
+        if (other.gameObject.tag == "item")
+        {
+            //Point
+            //포인트를 얻음
+            bool isBronze = other.gameObject.name.Contains("Bronze");
+            bool isSilver = other.gameObject.name.Contains("Silver");
+            bool isGold = other.gameObject.name.Contains("Gold");
+
+            if (isBronze)
+                gameManager.stagePoint += 50;
+            else if (isSilver)
+                gameManager.stagePoint += 100;
+            else if (isGold)
+                gameManager.stagePoint += 300;
+
+            //동전 사라지기(비활성화)
+            other.gameObject.SetActive(false);
+        }
+        else if (other.gameObject.tag == "Finish")
+        {
+            //Next Stage
+
+        }
     }
 }
 

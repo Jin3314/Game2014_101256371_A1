@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
-  - MonsterBlock
   - Enemy
+  - item
   layers:
   - Default
   - TransparentFX
