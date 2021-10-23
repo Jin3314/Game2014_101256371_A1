@@ -20,6 +20,7 @@ public class ButtonMove : MonoBehaviour
     {
 
     }
+    // for left moving button
     public void LeftBtnDown()
     {
         betterPmove2.LeftMove = true;
@@ -29,7 +30,7 @@ public class ButtonMove : MonoBehaviour
         betterPmove2.LeftMove = false;
         betterPmove2.Idle = true;
     }
-
+    // for right moving button
     public void RightBtnDown()
     {
         betterPmove2.RightMove = true;
@@ -40,7 +41,7 @@ public class ButtonMove : MonoBehaviour
         betterPmove2.RightMove = false;
         betterPmove2.Idle = true;
     }
-
+    // for jumping button
     public void Jump()
     {
        

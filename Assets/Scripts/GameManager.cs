@@ -14,11 +14,10 @@ public class GameManager : MonoBehaviour
     //player health
     public int health;
     public GameObject[] Stages;
-
-    public Image[] UIhealth; //이미지는 3개이므로 배열 
+    //variable for UI
+    public Image[] UIhealth; 
     public Text UIPoint;
     public Text UIStage;
-
     public GameObject UIRestartBtn;
     public GameObject UIMenuBtn;
     // Start is called before the first frame update
@@ -36,19 +35,18 @@ public class GameManager : MonoBehaviour
     {
 
         if (stageIndex < Stages.Length - 1)
-        {   // 마지막 스테이지 아닌 경우 -> 다음스테이지로 
+        {   // If it is not a last stage -> move to next stage 
             UIStage.text = "STAGE " + (stageIndex + 1);
             Stages[stageIndex].SetActive(false);
-            stageIndex++; //스테이지 증가 
-            Stages[stageIndex].SetActive(true); //다음 스테이지 활성화
+            stageIndex++; //move to next stage 
+            Stages[stageIndex].SetActive(true); //activate next stage
 
-            PlayerReposition(); //시작위치에서 플레이어를 태어나게?하는 함수 
+            PlayerReposition(); //player respawn function
         }
         else
-        { //마지막 스테이지인 경우 ->게임끝 
+        { //If it is last stage ->ends game 
 
-            //플레이어 컨트롤 막기 
-
+            //blocks player control
             Time.timeScale = 0;
 
             Text btnText = UIRestartBtn.GetComponentInChildren<Text>();
@@ -59,8 +57,8 @@ public class GameManager : MonoBehaviour
 
 
         //Calculate point
-        totalPoint += stagePoint; // 얻은 지역포인트 전체점수에 포함시키기 
-        stagePoint = 0; //지역 포인트 초기화
+        totalPoint += stagePoint; // add local's point to whole score
+        stagePoint = 0; //reset local point
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -69,14 +67,14 @@ public class GameManager : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
 
-            //체력감소
+ 
           
 
             if(health > 1)
             {
-                //떨어진 위치에서 플레이어 재생성
+                //respawn player
                 other.attachedRigidbody.velocity = Vector2.zero;
-                other.transform.position = new Vector3(-7, -2, 0); //플레이어의 시작위치로 되돌아오기
+                other.transform.position = new Vector3(-7, -2, 0); 
             }
 
             //health down
@@ -98,10 +96,10 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 0;
            
 
-            //UI 다시시작버튼 
+            //UI restart button
             UIRestartBtn.SetActive(true);
             UIMenuBtn.SetActive(true);
-            //죽었을 경우 모든 UI가 사라지도록 해야함 -> All Health UI Off
+            //All Health UI Off if player is dead
             UIhealth[0].color = new Color(1, 0, 0, 0.3f);
         }
     }
@@ -110,18 +108,18 @@ public class GameManager : MonoBehaviour
     {
 
         player.VelocityZero();
-        player.transform.position = new Vector3(-7, -2, 0); //플레이어의 시작위치로 되돌아오기
+        player.transform.position = new Vector3(-7, -2, 0); //respawn
     }
 
     public void Restart()
-    { //재시작이므로 처음부터 다시시작이라 scene 0번 
-        Time.timeScale = 1; //플레이어가 다시 움직일 수 있도록 함 
+    { //restart function
+        Time.timeScale = 1; //player can move
         SceneManager.LoadScene(1);
     }
 
     public void GotoMain()
-    { //재시작이므로 처음부터 다시시작이라 scene 0번 
-        Time.timeScale = 1; //플레이어가 다시 움직일 수 있도록 함 
+    { //go to main function
+        Time.timeScale = 1; //player can move
         SceneManager.LoadScene(0);
     }
 }

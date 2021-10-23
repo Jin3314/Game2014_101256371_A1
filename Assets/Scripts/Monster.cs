@@ -26,6 +26,7 @@ public class Monster : MonoBehaviour
 
     IEnumerator ChangeMovement()
     {
+        //for changing enemy's movement.
         movementFlag = Random.Range(0, 3);
 
         if (movementFlag == 0)
@@ -46,6 +47,7 @@ public class Monster : MonoBehaviour
 
     void Move()
     {
+        //enemy movement
         Vector3 moveVelocity = Vector3.zero;
         string dist = "";
 
@@ -82,7 +84,7 @@ public class Monster : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-
+        //for colliding with player
         if (other.gameObject.tag == "Player")
         {
             traceTarget = other.gameObject;
@@ -92,7 +94,7 @@ public class Monster : MonoBehaviour
     }
     void OnTriggerStay2D(Collider2D other)
     {
-
+        //for colliding with player
         if (other.gameObject.tag == "Player")
         {
             isTracing = true;
@@ -105,7 +107,7 @@ public class Monster : MonoBehaviour
     }
     void OnTriggerExit2D(Collider2D other)
     {
-
+        //for colliding with player
         if (other.gameObject.tag == "Player")
         {
             isTracing = false;
@@ -114,19 +116,19 @@ public class Monster : MonoBehaviour
     }
 
     public void OnDamaged()
-    { //몬스터가 데미지를 입었을때 
+    { //if monster takes damage
 
 
-        //Sprite Alpha : 색상 변경 
+        //Sprite Alpha 
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
-        //Sprite Flip Y : 뒤집어지기 
+        //Sprite Flip 
         spriteRenderer.flipY = true;
 
-        //Collider Disable : 콜라이더 끄기 
+        //Collider Disable 
         capcollider.enabled = false;
 
-        //Die Effect Jump : 아래로 추락(콜라이더 꺼서 바닥밑으로 추락함 )
+        //Die Effect Jump 
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
         //Destroy 
@@ -135,7 +137,7 @@ public class Monster : MonoBehaviour
     }
 
     void DeActive()
-    { //오브젝트 끄기 
+    { 
         gameObject.SetActive(false);
     }
 }

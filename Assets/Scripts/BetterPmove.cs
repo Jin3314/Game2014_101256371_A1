@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BetterPmove : MonoBehaviour
 {
-
+    //variables
     public AudioClip audioJump;
     public AudioClip audioAttack;
     public AudioClip audioDamaged;
@@ -17,7 +17,7 @@ public class BetterPmove : MonoBehaviour
     public bool JumpMoving = false;
     public bool Idle = false;
     public float jumpPower = -10.0f;
-    float moveSpeed = 4; //버튼을 누르는 동안에 오브젝트의 움직이는 속도
+    float moveSpeed = 4; 
     public bool isJumping = false;
     public int jumpCount;
     public bool isGround;
@@ -38,16 +38,16 @@ public class BetterPmove : MonoBehaviour
         rigid = gameObject.GetComponent<Rigidbody2D>();
         capcollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
-        jumpCount = 1; //점프 가능횟수
+        jumpCount = 1; //jump count
 
-        isGround = true; //땅에 있을때
+        isGround = true; //if player is on the ground
 
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        //jump move
         if (isGround)
         {
             jumpCount = 1;
@@ -72,14 +72,14 @@ public class BetterPmove : MonoBehaviour
             }
 
         }
-
+        //for idle state & animation
         if (Idle)
         {
             moveVelocity = new Vector3(0, 0, 0);
             transform.position += moveVelocity * moveSpeed * Time.deltaTime;
             animator.SetBool("isWalking", false);
         }
-
+        //for moving left
         if (LeftMove)
         {
 
@@ -88,6 +88,7 @@ public class BetterPmove : MonoBehaviour
             spriteRenderer.flipX = true;
             animator.SetBool("isWalking", true);
         }
+        //for moving right
         if (RightMove)
         {
 
@@ -99,37 +100,37 @@ public class BetterPmove : MonoBehaviour
 
 
     }
-
+    
     private void OnCollisionEnter2D(Collision2D col)
 
     {
-
+        //collision for jump
         if (col.gameObject.tag == "Ground")
 
         {
 
-            isGround = true;    //Ground에 닿으면 isGround는 true
+            isGround = true;    
 
-            jumpCount = 1;          //Ground에 닿으면 점프횟수가 1로 초기화됨
+            jumpCount = 1;          
 
         }
-
+        //collision for enemy
         if (col.gameObject.tag == "Enemy")
         {
             if (rigid.velocity.y < 0 && transform.position.y > col.transform.position.y)
             {
        
-                OnAttack(col.transform); //적을 공격하는 함수
+                OnAttack(col.transform); //function for attacking
             }
             else
-            { // 밟는 모션이 아닌 적과의 충돌-> 데미지를 플레이어가 받음(데미지 받는함수) 
-                OnDamaged(col.transform.position); //현재 충돌한 오브젝트의 위치값을 넘겨줌  
+            { //for player getting damage
+                OnDamaged(col.transform.position);   
             }
         }
 
 
     }
-
+    //player damaged funtion, activates invincibility for 2 seconds
     void OnDamaged(Vector2 tartgetPos)
     {
         audioSource.clip = audioDamaged;
@@ -137,44 +138,43 @@ public class BetterPmove : MonoBehaviour
 
         gameManager.HealthDown();
 
-        gameObject.layer = 11; //playerDamaged Layer number가 11로 지정되어있음 
+        gameObject.layer = 11; 
 
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f); //투명도를 0.4로 부여하여 지금이 무적시간으로 변경되었음을 보여줌
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f); 
 
-        //맞으면 튕겨나가는 모션
+        //motion for rebound
         int dirc = transform.position.x - tartgetPos.x > 0 ? 1 : -1;
-        //튕겨나가는 방향지정 -> 플레이어 위치(x) - 충돌한 오브젝트위치(x) > 0: 플레이어가 오브젝트를 기준으로 어디에 있었는지 판별
-        //> 0이면 1(오른쪽으로 튕김) , <=0 이면 -1 (왼쪽으로 튕김)
-        rigid.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse); // *7은 튕겨나가는 강도를 의미 
+        
+        rigid.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse); 
 
 
-        Invoke("OffDamaged", 2); //2초의 딜레이 (무적시간 2초)
+        Invoke("OffDamaged", 2); //2 sceconds of invincibility
 
-       
+
     }
-
+    //disables invincibility
     void OffDamaged()
-    { //무적해제함수 
-        gameObject.layer = 10; //플레이어 레이어로 복귀함
+    { 
+        gameObject.layer = 10;
 
-        spriteRenderer.color = new Color(1, 1, 1, 1); //투명도를 1로 다시 되돌림 
+        spriteRenderer.color = new Color(1, 1, 1, 1); 
 
     }
-
+    //player attack funtion
     void OnAttack(Transform enemy)
     {
         audioSource.clip = audioAttack;
         audioSource.Play();
-        //Point 점수 올리기
+        //Point 
         gameManager.stagePoint += 100;
 
-        //Reaction Force : 반동(플레이어가 튕겨져나감)
+        //Reaction Force 
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
         //Enemy Die
-        //몬스터에 적용한 스크립트의 함수를 사용하기위해 해당 클래스의 변수를 선언해서 초기화
+        
         Monster enemyMove = enemy.GetComponent<Monster>();
-        enemyMove.OnDamaged(); // 몬스터가 데미지를 입었을때 실행할 함수를 불러옴 
+        enemyMove.OnDamaged(); 
 
 
     }
@@ -187,7 +187,7 @@ public class BetterPmove : MonoBehaviour
             audioSource.clip = audioItem;
             audioSource.Play();
             //Point
-            //포인트를 얻음
+          
             bool isBronze = other.gameObject.name.Contains("Bronze");
             bool isSilver = other.gameObject.name.Contains("Silver");
             bool isGold = other.gameObject.name.Contains("Gold");
@@ -199,7 +199,7 @@ public class BetterPmove : MonoBehaviour
             else if (isGold)
                 gameManager.stagePoint += 300;
 
-            //동전 사라지기(비활성화)
+            
             other.gameObject.SetActive(false);
         }
         else if (other.gameObject.tag == "finish")
@@ -213,25 +213,25 @@ public class BetterPmove : MonoBehaviour
     }
 
     public void OnDie()
-    { //죽음 effect(외적인거)
+    { //dying effect
         audioSource.clip = audioDie;
         audioSource.Play();
-        //Sprite Alpha : 색상 변경 
+        //Sprite Alpha 
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
-        //Sprite Flip Y : 뒤집어지기 
+        //Sprite Flip Y 
         spriteRenderer.flipY = true;
 
-        //Collider Disable : 콜라이더 끄기 
+        //Collider Disable 
         capcollider.enabled = false;
 
-        //Die Effect Jump : 아래로 추락(콜라이더 꺼서 바닥밑으로 추락함 )
+        //Die Effect Jump 
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
 
     }
     public void VelocityZero()
-    { //속력을 0으로 만드는 함수 
+    { //makes velocity to zero
         rigid.velocity = Vector2.zero;
     }
 }
